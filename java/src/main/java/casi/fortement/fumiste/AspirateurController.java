@@ -21,8 +21,9 @@ public class AspirateurController {
 	private final String apiKey = "3365F0BE987ABFBDA9635BBD58058C99";
 
 	@RequestMapping("/analyser")
-	public Model recupererListeJeux(@ModelAttribute("command") SteamUser user)
+	public String recupererListeJeux(@ModelAttribute("command") SteamUser user)
 			throws MalformedURLException, IOException {
+		StringBuilder result = new StringBuilder();
 		StringBuilder url = new StringBuilder(
 				"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=");
 		url.append(this.apiKey);
@@ -35,16 +36,19 @@ public class AspirateurController {
 		JSONArray tmp = jsonObject.getJSONArray("games");
 		for (int j = 0; j < tmp.length(); j++) {
 			JSONObject jeuTmp = tmp.getJSONObject(j);
+			int nbValeurs = JSONObject.getNames(jeuTmp).length;
 			JeuSteam jeuSteamTmp = new JeuSteam();
 			jeuSteamTmp.setGameId(Integer.valueOf(jeuTmp.get("appid")
 					.toString()));
 			jeuSteamTmp.setPlaytimeForever(Integer.valueOf(jeuTmp.get(
 					"playtime_forever").toString()));
-			
-			jeuTmp.
-			System.out.println(jeuSteamTmp.toString());
+
+			if (nbValeurs == 3) {
+				jeuSteamTmp.setPlaytime2Weeks(Integer.valueOf(jeuTmp.get(
+						"playtime_2weeks").toString()));
+			}
+			result.append(jeuSteamTmp.toString());
 		}
-		System.out.println();
-		return null;
+		return "/";
 	}
 }
