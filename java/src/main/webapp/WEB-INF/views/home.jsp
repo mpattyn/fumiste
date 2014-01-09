@@ -11,8 +11,6 @@
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
-<a href = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${key}&steamids=76561197960435530">Voir un profil !</a>
-<a href="http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${key}&steamid=76561197960434622&format=json">Voir les jeux</a>
 
 	<form:form action='analyser.html'>
 		<form:input path='id'/>

@@ -3,12 +3,15 @@ package casi.fortement.fumiste;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import casi.fortement.pojo.JeuSteam;
 import casi.fortement.pojo.SteamUser;
 import casi.fortement.utils.JsonReader;
 
@@ -29,8 +32,19 @@ public class AspirateurController {
 
 		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString())
 				.getJSONObject("response");
-		System.out.println(jsonObject.getJSONObject(
-				JSONObject.getNames(jsonObject)[0]).toString());
+		JSONArray tmp = jsonObject.getJSONArray("games");
+		for (int j = 0; j < tmp.length(); j++) {
+			JSONObject jeuTmp = tmp.getJSONObject(j);
+			JeuSteam jeuSteamTmp = new JeuSteam();
+			jeuSteamTmp.setGameId(Integer.valueOf(jeuTmp.get("appid")
+					.toString()));
+			jeuSteamTmp.setPlaytimeForever(Integer.valueOf(jeuTmp.get(
+					"playtime_forever").toString()));
+			
+			jeuTmp.
+			System.out.println(jeuSteamTmp.toString());
+		}
+		System.out.println();
 		return null;
 	}
 }

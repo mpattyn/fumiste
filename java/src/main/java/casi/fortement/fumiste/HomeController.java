@@ -1,9 +1,5 @@
 package casi.fortement.fumiste;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -25,7 +21,6 @@ public class HomeController {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(HomeController.class);
-	private final String apiKey = "3365F0BE987ABFBDA9635BBD58058C99";
 
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -41,7 +36,6 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 
 		model.addAttribute("serverTime", formattedDate);
-		model.addAttribute("key", this.apiKey);
 		model.addAttribute("command", new SteamUser());
 		return "home";
 	}

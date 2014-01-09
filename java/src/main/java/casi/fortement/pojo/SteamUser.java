@@ -6,12 +6,12 @@ public class SteamUser {
 	
 	private String id;
 	private String pwd;
-	private List<String> jeux;
+	private List<JeuSteam> jeux;
 	
-	public List<String> getJeux() {
+	public List<JeuSteam> getJeux() {
 		return jeux;
-	} 
-	public void setJeux(List<String> jeux) {
+	}
+	public void setJeux(List<JeuSteam> jeux) {
 		this.jeux = jeux;
 	}
 	public String getId() {
