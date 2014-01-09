@@ -3,11 +3,12 @@ package casi.fortement.fumiste;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,11 +19,15 @@ import casi.fortement.utils.JsonReader;
 @Controller
 public class AspirateurController {
 
+	@Autowired
+	BasicDataSource datasource;
+
 	private final String apiKey = "3365F0BE987ABFBDA9635BBD58058C99";
 
 	@RequestMapping("/analyser")
 	public String recupererListeJeux(@ModelAttribute("command") SteamUser user)
 			throws MalformedURLException, IOException {
+
 		StringBuilder result = new StringBuilder();
 		StringBuilder url = new StringBuilder(
 				"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=");
@@ -47,8 +52,16 @@ public class AspirateurController {
 				jeuSteamTmp.setPlaytime2Weeks(Integer.valueOf(jeuTmp.get(
 						"playtime_2weeks").toString()));
 			}
+			updateDataBase(user.getId(), jeuSteamTmp);
 			result.append(jeuSteamTmp.toString());
 		}
 		return "/";
+	}
+
+	private void updateDataBase(String user_id, JeuSteam jeuSteamTmp) {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(datasource);
+		jdbcTemplate.execute("insert into users (" + user_id + ","
+				+ String.valueOf(jeuSteamTmp.getGameId()) + ","
+				+ String.valueOf(jeuSteamTmp.getPlaytimeForever()) + ")");
 	}
 }
