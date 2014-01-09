@@ -1,21 +1,17 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page session="false"%>
 <html>
 <head>
-	<title>Home</title>
+<title>Les fumistes</title>
 </head>
 <body>
-<h1>
-	Hello world!  
-</h1>
-
-<P>  The time on the server is ${serverTime}. </P>
+	<h1>Les fumistes.</h1>
 
 	<form:form action='analyser.html'>
-		<form:input path='id'/>
-		<form:password path='pwd' />
-		<input type="submit" />
+		<form:label path='id'>Entrez votre identifiant steam : </form:label>
+		<form:input path='id' />
+		<input type="submit" value="Analyser mon profil."/>
 	</form:form>
 </body>
 </html>
