@@ -1,8 +1,17 @@
 package casi.fortement.pojo;
 
 public class JeuSteam {
+	private String proprioId = "";
 	private int playtimeForever = 0;
 	private int gameId = 0;
+
+	public String getProprioId() {
+		return proprioId;
+	}
+
+	public void setProprioId(String proprioId) {
+		this.proprioId = proprioId;
+	}
 
 	public int getPlaytimeForever() {
 		return playtimeForever;

@@ -1,13 +1,21 @@
 package casi.fortement.fumiste;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +36,6 @@ public class AspirateurController {
 	public String recupererListeJeux(@ModelAttribute("command") SteamUser user)
 			throws MalformedURLException, IOException {
 
-		StringBuilder result = new StringBuilder();
 		StringBuilder url = new StringBuilder(
 				"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=");
 		url.append(this.apiKey);
@@ -39,23 +46,58 @@ public class AspirateurController {
 		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString())
 				.getJSONObject("response");
 		JSONArray tmp = jsonObject.getJSONArray("games");
+
+		StringBuilder requestFabricator = new StringBuilder(
+				"BEGIN TRANSACTION;\n");
 		for (int j = 0; j < tmp.length(); j++) {
 			JSONObject jeuTmp = tmp.getJSONObject(j);
 			JeuSteam jeuSteamTmp = new JeuSteam();
+			jeuSteamTmp.setProprioId(user.getId());
 			jeuSteamTmp.setGameId(Integer.valueOf(jeuTmp.get("appid")
 					.toString()));
 			jeuSteamTmp.setPlaytimeForever(Integer.valueOf(jeuTmp.get(
 					"playtime_forever").toString()));
-			updateDataBase(user.getId(), jeuSteamTmp);
-			result.append(jeuSteamTmp.toString());
+			requestFabricator.append(prepareQuery(jeuSteamTmp));
 		}
-		return "/";
+		requestFabricator.append("COMMIT;");
+		majBase(requestFabricator);
+		return "resultats/" + user.getId();
 	}
 
-	private void updateDataBase(String user_id, JeuSteam jeuSteamTmp) {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(datasource);
-		jdbcTemplate.execute("insert into users values (" + user_id + ","
+	private void majBase(StringBuilder donnees) {
+		try {
+			String fileName = DateFormat.getDateTimeInstance(DateFormat.LONG,
+					DateFormat.LONG).format(new Date())
+					+ "tmp.sql";
+			File file = new File(fileName);
+			file.createNewFile();
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(donnees.toString());
+			bw.close();
+
+			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+			populator.addScript(new FileSystemResource(file));
+			try {
+				populator.populate(datasource.getConnection());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			file.delete();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private String prepareQuery(JeuSteam jeuSteamTmp) {
+		String result = "insert into users values ("
+				+ String.valueOf(jeuSteamTmp.getProprioId()) + ","
 				+ String.valueOf(jeuSteamTmp.getGameId()) + ","
-				+ String.valueOf(jeuSteamTmp.getPlaytimeForever()) + ")");
+				+ String.valueOf(jeuSteamTmp.getPlaytimeForever()) + ");\n";
+
+		return result;
 	}
 }
