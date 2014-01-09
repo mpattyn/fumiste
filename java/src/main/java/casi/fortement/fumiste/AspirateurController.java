@@ -41,17 +41,11 @@ public class AspirateurController {
 		JSONArray tmp = jsonObject.getJSONArray("games");
 		for (int j = 0; j < tmp.length(); j++) {
 			JSONObject jeuTmp = tmp.getJSONObject(j);
-			int nbValeurs = JSONObject.getNames(jeuTmp).length;
 			JeuSteam jeuSteamTmp = new JeuSteam();
 			jeuSteamTmp.setGameId(Integer.valueOf(jeuTmp.get("appid")
 					.toString()));
 			jeuSteamTmp.setPlaytimeForever(Integer.valueOf(jeuTmp.get(
 					"playtime_forever").toString()));
-
-			if (nbValeurs == 3) {
-				jeuSteamTmp.setPlaytime2Weeks(Integer.valueOf(jeuTmp.get(
-						"playtime_2weeks").toString()));
-			}
 			updateDataBase(user.getId(), jeuSteamTmp);
 			result.append(jeuSteamTmp.toString());
 		}
@@ -60,7 +54,7 @@ public class AspirateurController {
 
 	private void updateDataBase(String user_id, JeuSteam jeuSteamTmp) {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(datasource);
-		jdbcTemplate.execute("insert into users (" + user_id + ","
+		jdbcTemplate.execute("insert into users values (" + user_id + ","
 				+ String.valueOf(jeuSteamTmp.getGameId()) + ","
 				+ String.valueOf(jeuSteamTmp.getPlaytimeForever()) + ")");
 	}
