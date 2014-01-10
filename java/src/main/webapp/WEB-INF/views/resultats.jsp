@@ -12,13 +12,13 @@
 
 	<h1>Jeux possédés</h1>
 	<c:forEach items="${jeux }" var="jeu">
-		${jeu.gameId} <br />
+		${jeu} <br />
 	</c:forEach>
 
 	<h1>Jeux suggérés</h1>
 
-	<c:forEach items="${jeuxSuggeres }" var="jeu">
-		${jeu.nom} <br />
+	<c:forEach items="${recommandations}" var="jeu">
+		   ${jeu} <br />
 	</c:forEach>
 </body>
 </html>
