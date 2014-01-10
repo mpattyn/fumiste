@@ -1,35 +1,27 @@
 package casi.fortement.fumiste;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+
 import casi.fortement.pojo.JeuSteam;
-import casi.fortement.utils.GameDao;
-
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Iterator;
-
-import org.jsoup.Jsoup;
-import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 @Controller
 public class ResultatsController {
@@ -43,9 +35,16 @@ public class ResultatsController {
 
 		List<JeuSteam> jeux = recupererJeux(id);
 
+		long start = System.currentTimeMillis();
 		result.addObject("jeux", getGamesNames(jeux));
+		long end = System.currentTimeMillis() - start;
+		System.out.println("Indicateur 3 : " + String.valueOf(end));
+		
+		start = System.currentTimeMillis();
 		result.addObject("recommandations", getRecommandations(id));
-
+		end = System.currentTimeMillis() - start;
+		System.out.println("Indicateur 1 : " + String.valueOf(end));
+		
 		return result;
 	}
 
@@ -126,7 +125,7 @@ public class ResultatsController {
 		compteurJeux = sortHashMapByValuesD(compteurJeux);
 
 		List<String> result = new ArrayList<String>();
-		Iterator it = compteurJeux.entrySet().iterator();
+		Iterator<?> it = compteurJeux.entrySet().iterator();
 		int compteur = 0;
 		while (it.hasNext() && compteur < 3) {
 			Map.Entry pairs = (Map.Entry) it.next();
@@ -149,6 +148,8 @@ public class ResultatsController {
 	private String getGameName(String gameId) {
 		String result = "";
 		try {
+			System.setProperty("http.proxyHost", "cachemad.insa-rouen.fr");
+			System.setProperty("http.proxyPort", "3128");
 			Document doc = Jsoup.connect(
 					"http://store.steampowered.com/app/" + gameId).get();
 			result = (doc.title().replace("on Steam", ""));
@@ -160,17 +161,17 @@ public class ResultatsController {
 
 	private LinkedHashMap<String, Integer> sortHashMapByValuesD(
 			HashMap<String, Integer> passedMap) {
-		List<String> mapKeys = new ArrayList(passedMap.keySet());
-		List<Integer> mapValues = new ArrayList(passedMap.values());
+		List<String> mapKeys = new ArrayList<String>(passedMap.keySet());
+		List<Integer> mapValues = new ArrayList<Integer>(passedMap.values());
 		Collections.sort(mapValues);
 		Collections.sort(mapKeys);
 
-		LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap();
+		LinkedHashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
 
-		Iterator valueIt = mapValues.iterator();
+		Iterator<Integer> valueIt = mapValues.iterator();
 		while (valueIt.hasNext()) {
 			Object val = valueIt.next();
-			Iterator keyIt = mapKeys.iterator();
+			Iterator<String> keyIt = mapKeys.iterator();
 
 			while (keyIt.hasNext()) {
 				Object key = keyIt.next();

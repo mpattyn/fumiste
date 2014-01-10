@@ -4,13 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.springframework.web.servlet.ModelAndView;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,6 +18,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import casi.fortement.pojo.JeuSteam;
 import casi.fortement.pojo.SteamUser;
@@ -44,7 +43,8 @@ public class AspirateurController {
 		url.append(user.getId());
 		url.append("&format=json");
 
-		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString(), false)
+		long start = System.currentTimeMillis();
+		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString(), true)
 				.getJSONObject("response");
 		JSONArray tmp = jsonObject.getJSONArray("games");
 
@@ -60,6 +60,9 @@ public class AspirateurController {
 					"playtime_forever").toString()));
 			requestFabricator.append(prepareQuery(jeuSteamTmp));
 		}
+		long end = System.currentTimeMillis() - start;
+		System.out.println("Indicateur 2 : " + String.valueOf(end));
+		
 		requestFabricator.append("COMMIT;");
 		majBase(requestFabricator);
 		ModelAndView result = new ModelAndView("resultat");
