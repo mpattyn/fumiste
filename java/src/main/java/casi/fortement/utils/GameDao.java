@@ -14,28 +14,28 @@ import org.springframework.stereotype.Component;
 import casi.fortement.pojo.JeuSteam;
 
 @Component
-public class GameDao {
+    public class GameDao {
 
-	@Autowired
+    @Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public List<JeuSteam> recupererJeux(String user_id) {
-		Collection jeux = this.jdbcTemplate.query(
-				"select id_game, from t_actor", new RowMapper() {
-					public Object mapRow(ResultSet rs, int rowNum)
-							throws SQLException {
-						JeuSteam jeu = new JeuSteam();
-						jeu.setGameId(rs.getInt("id_game"));
-						jeu.setPlaytimeForever(rs.getInt("playtime"));
-						return jeu;
-					}
-				});
-		List<JeuSteam> resultats = new ArrayList<JeuSteam>();
-		for (Object jeu : jeux) {
-			resultats.add((JeuSteam) jeu);
-		}
-		return resultats;
+	Collection jeux = this.jdbcTemplate.query(
+						  "select id_game, from t_actor", new RowMapper() {
+							  public Object mapRow(ResultSet rs, int rowNum)
+							      throws SQLException {
+							      JeuSteam jeu = new JeuSteam();
+							      jeu.setGameId(rs.getInt("id_game"));
+							      jeu.setPlaytimeForever(rs.getInt("playtime"));
+							      return jeu;
+							  }
+						      });
+	List<JeuSteam> resultats = new ArrayList<JeuSteam>();
+	for (Object jeu : jeux) {
+	    resultats.add((JeuSteam) jeu);
 	}
+	return resultats;
+    }
 
 }

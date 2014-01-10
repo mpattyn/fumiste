@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.springframework.web.servlet.ModelAndView;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +34,7 @@ public class AspirateurController {
 	private final String apiKey = "3365F0BE987ABFBDA9635BBD58058C99";
 
 	@RequestMapping("/analyser")
-	public String recupererListeJeux(@ModelAttribute("command") SteamUser user)
+	public ModelAndView recupererListeJeux(@ModelAttribute("command") SteamUser user)
 			throws MalformedURLException, IOException {
 
 		StringBuilder url = new StringBuilder(
@@ -43,7 +44,7 @@ public class AspirateurController {
 		url.append(user.getId());
 		url.append("&format=json");
 
-		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString())
+		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString(), false)
 				.getJSONObject("response");
 		JSONArray tmp = jsonObject.getJSONArray("games");
 
@@ -61,7 +62,9 @@ public class AspirateurController {
 		}
 		requestFabricator.append("COMMIT;");
 		majBase(requestFabricator);
-		return "resultats/" + user.getId();
+		ModelAndView result = new ModelAndView("resultat");
+		result.addObject("id", user.getId());
+		return result;
 	}
 
 	private void majBase(StringBuilder donnees) {

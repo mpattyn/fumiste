@@ -8,7 +8,7 @@
 <body>
 	<h1>Les fumistes.</h1>
 
-	<form:form action='analyser.html'>
+	<form:form action='analyser'>
 		<form:label path='id'>Entrez votre identifiant steam : </form:label>
 		<form:input path='id' />
 		<input type="submit" value="Analyser mon profil."/>
