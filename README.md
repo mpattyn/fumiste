@@ -9,7 +9,7 @@ Ce projet à pour but de créer des prototypes de logiciel de recommendations.
 Ce prototype utilise l'api python steamapi (https://github.com/smiley/steamapi.git).
 Il utilise également requests (https://github.com/kennethreitz/requests).
 Pour le lancer, il suffit de se placer dans prototypePython et de faire : 
-### python prototypePython.py
+##### python prototypePython.py
 
 
 ## Second prototype : Java
@@ -17,7 +17,7 @@ Pour le lancer, il suffit de se placer dans prototypePython et de faire :
 Ce prototype utilise le framework spring (http://spring.io/) et un de ces modules, spring-MVC.
 
 Pour le lancer, il suffit de se placer dans java et de faire :
-### mvn tomcat:run 
+##### mvn tomcat:run 
 
 ## Où trouver des id steam ? 
 
