@@ -140,16 +140,18 @@ public class ResultatsController {
 		List<String> nomsJeux = new ArrayList<String>();
 		System.out.println("On chope les noms des jeux, veuillez patienter.");
 		for (JeuSteam jeu : gamesId) {
-			nomsJeux.add(getGameName(String.valueOf(jeu.getGameId())));
+			nomsJeux.add(getGameName(String.valueOf(jeu.getGameId()), false));
 		}
 		return nomsJeux;
 	}
 
-	private String getGameName(String gameId) {
+	private String getGameName(String gameId, boolean hasProxy) {
 		String result = "";
 		try {
-			System.setProperty("http.proxyHost", "cachemad.insa-rouen.fr");
-			System.setProperty("http.proxyPort", "3128");
+			if(hasProxy){
+				System.setProperty("http.proxyHost", "cachemad.insa-rouen.fr");
+				System.setProperty("http.proxyPort", "3128");
+			}
 			Document doc = Jsoup.connect(
 					"http://store.steampowered.com/app/" + gameId).get();
 			result = (doc.title().replace("on Steam", ""));
