@@ -44,7 +44,7 @@ public class AspirateurController {
 		url.append("&format=json");
 
 		long start = System.currentTimeMillis();
-		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString(), true)
+		JSONObject jsonObject = JsonReader.readJsonFromUrl(url.toString(), false)
 				.getJSONObject("response");
 		JSONArray tmp = jsonObject.getJSONArray("games");
 
